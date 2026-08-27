@@ -139,3 +139,10 @@ python -m pytest -q
 ```
 
 This work derives from [adis98/HierarchicalTS](https://github.com/adis98/HierarchicalTS) at base commit `dcb1e98eb3bc31f4fa1c0ce3bfef4dcd8e473e47`. I retained the upstream MIT license and copyright notice. [Upstream provenance](docs/UPSTREAM.md) records what remains upstream-derived and what I added in this repository.
+
+## Author
+
+**Federico Santorsola**
+
+- [GitHub](https://github.com/Frero0)
+- [federico.santorsola@edu.unito.it](mailto:federico.santorsola@edu.unito.it)
