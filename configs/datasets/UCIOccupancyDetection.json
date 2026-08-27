@@ -1,0 +1,34 @@
+{
+  "dataset_id": "UCIOccupancyDetection",
+  "csv_path": "data/uci-occupancy-detection/occupancy_training.csv",
+  "loader": "flat_csv",
+  "preprocessing_mode": "train_only",
+  "timestamp_column": "date",
+  "signal_columns": [
+    "Temperature",
+    "Humidity",
+    "Light",
+    "CO2"
+  ],
+  "metadata_columns": [
+    "Occupancy"
+  ],
+  "cyclic_columns": [],
+  "dtype_overrides": {
+    "Temperature": "float64",
+    "Humidity": "float64",
+    "Light": "float64",
+    "CO2": "float64",
+    "Occupancy": "int64"
+  },
+  "temporal_order": [
+    "date"
+  ],
+  "split": {
+    "mode": "timestamp",
+    "cutoff": "2015-02-09T00:00:00Z"
+  },
+  "synthesis_conditions": {
+    "C": {}
+  }
+}

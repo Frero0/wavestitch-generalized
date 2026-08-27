@@ -1,0 +1,43 @@
+{
+  "dataset_id": "MetroTraffic",
+  "training": {
+    "window_size": 32,
+    "stride": 1,
+    "batch_size": 1024,
+    "epochs": 300,
+    "learning_rate": 0.0001,
+    "seed": 42
+  },
+  "diffusion": {
+    "timesteps": 200,
+    "beta_0": 0.0001,
+    "beta_T": 0.02
+  },
+  "architecture": {
+    "backbone": "S4",
+    "hdim": 64,
+    "layers": 4,
+    "num_res_layers": 4,
+    "res_channels": 64,
+    "skip_channels": 64,
+    "diff_step_embed_in": 32,
+    "diff_step_embed_mid": 64,
+    "diff_step_embed_out": 64,
+    "s4_lmax": 100,
+    "s4_dstate": 64,
+    "s4_dropout": 0.0,
+    "s4_bidirectional": true,
+    "s4_layernorm": true,
+    "proportional_cyclic_encoding": false
+  },
+  "artifacts": {
+    "checkpoint_path": "saved_models/MetroTraffic/model.pth",
+    "output_dir": "generated"
+  },
+  "synthesis": {
+    "stride": 8,
+    "profile": "C",
+    "trials": 5,
+    "batch_size": 1024
+  }
+}

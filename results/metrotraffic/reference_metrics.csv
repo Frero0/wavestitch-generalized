@@ -1,0 +1,10 @@
+dataset,method,profile,metric,mean,std,trials
+MetroTraffic,WaveStitch-reference,C,mse,0.5330670836064348,0.008742624480797998,5
+MetroTraffic,WaveStitch-reference,C,acd,0.14540227023173516,0.009126550236374483,5
+MetroTraffic,WaveStitch-reference,C,xcorrD,0.0987060381760378,0.003756553049349223,5
+MetroTraffic,WaveStitch-reference,M,mse,0.323539825168278,0.032583413223481864,5
+MetroTraffic,WaveStitch-reference,M,acd,0.11384154453973264,0.013006135066217058,5
+MetroTraffic,WaveStitch-reference,M,xcorrD,0.12134529542948506,0.005321497664420713,5
+MetroTraffic,WaveStitch-reference,F,mse,0.15331190644328277,0.008987603871035938,5
+MetroTraffic,WaveStitch-reference,F,acd,0.04525967971465282,0.0017471343175966113,5
+MetroTraffic,WaveStitch-reference,F,xcorrD,0.05377487535541261,0.00916605761044041,5

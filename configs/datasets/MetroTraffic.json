@@ -1,0 +1,49 @@
+{
+  "dataset_id": "MetroTraffic",
+  "csv_path": "MetroInterstateTrafficVolume/Metro_Interstate_Traffic_Volume.csv/Metro_Interstate_Traffic_Volume.csv",
+  "loader": "legacy",
+  "preprocessing_mode": "upstream_legacy",
+  "timestamp_column": "date_time",
+  "signal_columns": [
+    "temp",
+    "rain_1h",
+    "snow_1h",
+    "clouds_all",
+    "traffic_volume"
+  ],
+  "metadata_columns": [
+    "year",
+    "month",
+    "day",
+    "hour"
+  ],
+  "cyclic_columns": [
+    "year",
+    "month",
+    "day",
+    "hour"
+  ],
+  "dtype_overrides": {},
+  "temporal_order": [
+    "year",
+    "month",
+    "day",
+    "hour"
+  ],
+  "split": {
+    "mode": "column_values",
+    "column": "year",
+    "test_values": [
+      2018
+    ]
+  },
+  "synthesis_conditions": {
+    "C": {},
+    "M": {
+      "day": 15
+    },
+    "F": {
+      "hour": 6
+    }
+  }
+}

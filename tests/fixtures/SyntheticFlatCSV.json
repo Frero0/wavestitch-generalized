@@ -1,0 +1,33 @@
+{
+  "dataset_id": "SyntheticFlatCSV",
+  "csv_path": "synthetic_flat.csv",
+  "loader": "flat_csv",
+  "preprocessing_mode": "upstream_legacy",
+  "timestamp_column": "timestamp",
+  "signal_columns": [
+    "load",
+    "temperature"
+  ],
+  "metadata_columns": [
+    "year",
+    "site"
+  ],
+  "cyclic_columns": [
+    "year",
+    "site"
+  ],
+  "dtype_overrides": {
+    "site": "string"
+  },
+  "temporal_order": [
+    "timestamp",
+    "site"
+  ],
+  "split": {
+    "mode": "column_values",
+    "column": "year",
+    "test_values": [
+      2024
+    ]
+  }
+}

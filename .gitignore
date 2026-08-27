@@ -1,0 +1,88 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.cache/
+
+# Virtual environments and local environment variables
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+
+# Build, packaging, and coverage artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Datasets (upstream names and future generic locations)
+/data/
+/datasets/
+BeijingAirQuality/
+MetroInterstateTrafficVolume/
+WebTrafficLAcity/
+QuarterlyTourismAustralia/
+StoreItemandDemandForecastingChallenge/
+RossmanSales/
+PanamaEnergy/
+
+# Model checkpoints
+saved_models/
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+
+# Generated data and local experiment results
+generated/
+generated_smoke/
+synths/
+outputs/
+evaluation_results/
+smoke_artifacts/
+
+# Logs and run metadata
+logs/
+runs/
+training_logs/
+synthesis_logs/
+evaluation_logs/
+*.log
+*.pid
+*.status
+SUCCESS
+FAILED
+
+# Machine-specific experiment launchers (kept locally, not released)
+launch_uci_occupancy_*.sh
+
+# Notebooks, documentation builds, and temporary files
+.ipynb_checkpoints/
+docs/_build/
+site/
+tmp/
+temp/
+*.tmp
+*.swp
+*~
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
