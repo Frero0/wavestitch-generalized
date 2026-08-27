@@ -1,6 +1,6 @@
 # WaveStitch checkpoint format
 
-New checkpoints produced by `training_wavestitch.py` use structured schema v2:
+New checkpoints produced by `scripts/training/training_wavestitch.py` use structured schema v2:
 
 ```text
 checkpoint_format: "wavestitch"

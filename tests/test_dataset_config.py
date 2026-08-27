@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from dataset_config import (
+from wavestitch.dataset_config import (
     DatasetConfigError,
     DatasetConfigNotFoundError,
     DatasetSourceNotFoundError,

@@ -89,14 +89,14 @@ override for the other configured upstream conditions.
 Training from JSON:
 
 ```bash
-python training_wavestitch.py \
+python -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/uci_occupancy_smoke.json
 ```
 
 An explicit CLI override wins over the file:
 
 ```bash
-python training_wavestitch.py \
+python -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/uci_occupancy_smoke.json \
   --epochs 2 --max-steps 4
 ```
@@ -105,7 +105,7 @@ Synthesis reads model dimensions, architecture, encoding, window size, and
 diffusion parameters from a structured checkpoint:
 
 ```bash
-python synthesis_wavestitch_pipeline_strided_preconditioning.py \
+python -m scripts.synthesis.synthesis_wavestitch_pipeline_strided_preconditioning \
   --experiment-config configs/experiments/uci_occupancy_smoke.json
 ```
 
@@ -122,7 +122,7 @@ prints the resolved device, dimensions, columns, row/window counts, optimizer,
 diffusion setup, and artifact destinations, then exits before model execution:
 
 ```bash
-python training_wavestitch.py \
+python -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/uci_occupancy_smoke.json \
   --dry-run
 ```

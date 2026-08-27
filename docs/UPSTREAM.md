@@ -6,7 +6,7 @@ This repository is an independent follow-up to **WaveStitch: Flexible and Fast C
 - Imported base commit: `dcb1e98eb3bc31f4fa1c0ce3bfef4dcd8e473e47`
 - Upstream license: MIT
 - Retained license file: `LICENSE`, unchanged
-- Retained upstream appendix: `WaveStitch_Appendix.pdf`, unchanged
+- Retained upstream appendix: `docs/papers/WaveStitch_Appendix.pdf`, unchanged
 
 This is not an official repository of the original authors. Results in this repository were generated during this independent project's validation and must not be attributed to the upstream authors.
 

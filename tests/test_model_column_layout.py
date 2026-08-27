@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from data_utils import Preprocessor
-from training_utils import resolve_model_columns
+from wavestitch.data_utils import Preprocessor
+from wavestitch.training_utils import resolve_model_columns
 
 
 def test_uci_occupancy_model_layout_comes_from_dataset_config():

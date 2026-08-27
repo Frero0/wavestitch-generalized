@@ -2,7 +2,7 @@ import io
 
 import torch
 
-from TSImputers.SSSDS4Imputer import SSSDS4Imputer
+from wavestitch.models.sssd_s4_imputer import SSSDS4Imputer
 
 
 def _make_model():

@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from synthesis_wavestitch_pipeline_strided_preconditioning import (
+from scripts.synthesis.synthesis_wavestitch_pipeline_strided_preconditioning import (
     resolve_sampler_ablation_options,
     reverse_noise_term,
     stitching_gradient_step,

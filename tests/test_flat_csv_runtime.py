@@ -6,8 +6,8 @@ import pandas as pd
 import pytest
 from sklearn.preprocessing import StandardScaler
 
-import dataset_config
-from data_utils import FlatCSVValidationError, Preprocessor
+from wavestitch import dataset_config
+from wavestitch.data_utils import FlatCSVValidationError, Preprocessor
 
 
 FIXTURE_CONFIG = Path(__file__).parent / "fixtures" / "SyntheticFlatCSV.json"

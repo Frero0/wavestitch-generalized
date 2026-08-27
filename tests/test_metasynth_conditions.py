@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from data_utils import Preprocessor
-from dataset_config import DatasetConfig, load_dataset_config_by_id
-from metasynth import SynthesisConditionError, metadataMask
+from wavestitch.data_utils import Preprocessor
+from wavestitch.dataset_config import DatasetConfig, load_dataset_config_by_id
+from wavestitch.metasynth import SynthesisConditionError, metadataMask
 
 
 def _custom_config(synthesis_conditions):

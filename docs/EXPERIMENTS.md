@@ -64,7 +64,7 @@ Training writes structured checkpoint v2. Synthesis infers the dataset and resto
 Always preflight first:
 
 ```bash
-python training_wavestitch.py \
+python -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/uci_occupancy_full.json \
   --dry-run
 ```
@@ -72,10 +72,10 @@ python training_wavestitch.py \
 Full runs are intentionally explicit:
 
 ```bash
-python -u training_wavestitch.py \
+python -u -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/uci_occupancy_full.json
 
-python -u synthesis_wavestitch_pipeline_strided_preconditioning.py \
+python -u -m scripts.synthesis.synthesis_wavestitch_pipeline_strided_preconditioning \
   --experiment-config configs/experiments/uci_occupancy_full.json \
   --output-dir generated/uci-occupancy-reproduction
 ```
@@ -83,7 +83,7 @@ python -u synthesis_wavestitch_pipeline_strided_preconditioning.py \
 Evaluation of five completed trial CSVs:
 
 ```bash
-python -u evaluate_uci_occupancy_full.py \
+python -u -m scripts.evaluation.evaluate_uci_occupancy_full \
   --checkpoint-path saved_models/UCIOccupancyDetection/full_experiment_v2.pth \
   --input-dir generated/uci-occupancy-reproduction/UCIOccupancyDetection/C \
   --output-dir evaluation_results/uci-occupancy-reproduction

@@ -3,10 +3,10 @@ from types import SimpleNamespace
 import pandas as pd
 import pytest
 
-from data_utils import Preprocessor
-from dataset_config import load_dataset_config_by_id
-from metasynth import metadataMask
-from window_validation import (
+from wavestitch.data_utils import Preprocessor
+from wavestitch.dataset_config import load_dataset_config_by_id
+from wavestitch.metasynth import metadataMask
+from wavestitch.window_validation import (
     TemporalWindowValidationError,
     validate_synthesis_context_mask,
     validate_synthesis_windowing,

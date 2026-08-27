@@ -1,131 +1,93 @@
 # WaveStitch Generalized
 
-WaveStitch Generalized is a configurable and reproducible research implementation for conditional multivariate time-series generation. It is built on top of the original [WaveStitch repository](https://github.com/adis98/HierarchicalTS), while preserving a legacy path for reference reproduction.
+I built this repository to continue the work I started in my bachelor's thesis on synthetic multivariate time series. The thesis applied WaveStitch to energy and environmental measurements from an HPC research centre; here I separated that application-specific work from the model pipeline and turned the pipeline into something I can configure, validate and test on public datasets.
 
-> This is an independent follow-up project. It is not the official repository of the original WaveStitch authors, and the results reported here are this project's own reproduction and validation results.
+This is not the official WaveStitch repository. It is my generalization of [adis98/HierarchicalTS](https://github.com/adis98/HierarchicalTS), with the original MIT license and attribution preserved. My submitted thesis, including its scope and data-availability notes, is in [Frero0/bachelors-thesis-unito](https://github.com/Frero0/bachelors-thesis-unito).
 
-## Why this repository exists
+## What I changed
 
-The upstream implementation couples preprocessing and experiment logic to a fixed set of datasets. This project generalizes that workflow so a flat time-series CSV can be described by configuration, validated before execution, preprocessed without test leakage, trained, reconstructed from a structured checkpoint, synthesized, and evaluated through explicit experiment protocols. It also studies what happens when WaveStitch is moved outside its original benchmark setting.
+The upstream code assumes a small set of datasets and keeps much of the experiment logic inside dataset-specific scripts. I added a configuration layer around that workflow so that a flat time-series CSV can be described without editing the loader itself.
 
-## Main features
+The generalized path now provides:
 
-- Typed JSON `DatasetConfig` with ordered signals, metadata, temporal keys, split rules, and synthesis conditions.
-- Generic `flat_csv` loader with schema, timestamp, ordering, type, and split validation.
-- Configurable `column_values`, chronological `ratio`, and `timestamp` splits.
-- Config-driven C/M/F synthesis masks without inventing a hierarchy for datasets that do not have one.
-- Leakage-free `train_only` preprocessing: scalers and encoders are fitted on train rows only.
-- Reproducible `upstream_legacy` preprocessing for MetroTraffic and upstream comparisons.
-- Structured checkpoint v2 with architecture, diffusion, column layout, dataset snapshot, and fitted preprocessing state.
-- Automatic model and preprocessing reconstruction during structured-checkpoint synthesis; no refit on test data.
-- JSON experiment configurations plus CLI overrides for training, synthesis, and dry-runs.
-- Window, context, stride, mask, and checkpoint/config compatibility validation.
-- Generic WaveStitch training and pipeline synthesis for configured datasets.
-- UCI Occupancy evaluation, empirical conditioned baseline, and isolated sampler-ablation tooling.
-- Regression tests for upstream compatibility, leakage prevention, checkpoint round-trips, and sampler defaults.
+- typed JSON configurations for datasets and experiments;
+- chronological, timestamp-based and column-based train/test splits;
+- preprocessing fitted only on the training partition, with an explicit legacy mode for upstream reproduction;
+- configurable C/M/F conditioning masks;
+- structured checkpoints containing the model layout, diffusion settings, dataset snapshot and fitted preprocessing state;
+- validation of schemas, windows, strides, masks and checkpoint/config compatibility before an expensive run starts;
+- reproducible training, synthesis and evaluation commands;
+- regression tests for the generalized path and for behavior retained from upstream.
 
-The primary generalized entry points are `training_wavestitch.py` and `synthesis_wavestitch_pipeline_strided_preconditioning.py`. Other scripts retained from upstream are research utilities and may still follow their original dataset-specific interfaces.
+I kept the older model variants, ablations and plotting utilities because they document the research path, but they are separated from the main entry points instead of filling the repository root.
 
-## Installation and quick start
+## Repository layout
 
-Python 3.10 or newer is recommended. Start from the repository root:
+| Path | Contents |
+|---|---|
+| `wavestitch/` | Reusable loading, preprocessing, configuration, checkpointing and model code |
+| `scripts/training/` | Training entry points |
+| `scripts/synthesis/` | WaveStitch and comparison-model synthesis entry points |
+| `scripts/evaluation/` | UCI Occupancy evaluation, baseline and sampler ablations |
+| `scripts/analysis/` | Historical analyses, tables, plots and animation utilities |
+| `scripts/experiments/` | Shell launchers for the retained upstream-style experiments |
+| `configs/datasets/` | Dataset schemas and split/conditioning rules |
+| `configs/experiments/` | Reproducible experiment settings |
+| `tests/` | Unit and regression tests |
+| `results/` | Curated, small result tables that can be versioned |
+| `docs/` | Configuration references, protocols, limitations and upstream provenance |
+
+Raw data, checkpoints, generated samples, logs and local run state are intentionally ignored by Git.
+
+## Installation
+
+Python 3.10 or newer is recommended.
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-pytest -q
+python -m pytest -q
 ```
 
-The requirements do not assume CUDA. CPU and macOS execution use the built-in slow Cauchy-kernel fallback and are functionally supported, but full S4 training can be very slow. On a compatible NVIDIA system, install the PyTorch build matching the local CUDA runtime before installing the remaining requirements. PyKeOps or the upstream CUDA Cauchy extension can accelerate the S4 kernel on supported GPU environments; they are optional and are not part of the portable CPU installation.
+The requirements are portable and do not force a CUDA build. CPU and macOS runs use the slow Cauchy-kernel fallback; this is enough for tests and dry-runs, but full S4 training is much faster with a compatible NVIDIA/CUDA setup and either PyKeOps or the upstream CUDA extension.
 
-After preparing a dataset, validate a complete protocol without training:
+## Start with a dry-run
+
+The quickest way to inspect the complete generalized pipeline is the small UCI Occupancy protocol:
 
 ```bash
-python training_wavestitch.py \
+python -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/uci_occupancy_smoke.json \
   --dry-run
 ```
 
-Dry-run loads and validates data, resolves preprocessing and model dimensions, and checks split/window counts. It exits before model execution.
+A dry-run loads the dataset, applies the declared split, resolves the processed column layout, checks the available windows and validates the model configuration. It stops before model execution.
 
-## Custom dataset example
+To add a dataset, create a JSON file in `configs/datasets/` and point `csv_path` to an ordered flat CSV. The configuration declares signal columns, metadata columns, temporal ordering, split rules and synthesis conditions. The complete schema and an example are in [Dataset configuration](docs/DATASET_CONFIG.md); experiment-level settings are documented in [Experiment configuration](docs/EXPERIMENT_CONFIG.md).
 
-For an ordered CSV at `data/example/readings.csv` with columns `timestamp,temperature,power,site`, create `configs/datasets/Example.json`:
+## Reproducing the public experiments
 
-```json
-{
-  "dataset_id": "Example",
-  "csv_path": "data/example/readings.csv",
-  "loader": "flat_csv",
-  "preprocessing_mode": "train_only",
-  "timestamp_column": "timestamp",
-  "signal_columns": ["temperature", "power"],
-  "metadata_columns": ["site"],
-  "cyclic_columns": ["site"],
-  "dtype_overrides": {"site": "string"},
-  "temporal_order": ["timestamp"],
-  "split": {"mode": "ratio", "train_ratio": 0.8},
-  "synthesis_conditions": {
-    "C": {},
-    "F": {"site": "north"}
-  }
-}
-```
+### MetroTraffic reference
 
-`train_only` is the recommended mode. A metadata category present at transform time but absent from train raises an explicit error rather than receiving a silent, semantically ambiguous encoding. See [Dataset configuration](docs/DATASET_CONFIG.md) for the complete schema and constraints.
-
-## Reproducing the experiments
-
-Datasets, checkpoints, generated series, logs, and runtime markers are intentionally not distributed in this repository.
-
-### MetroTraffic reference experiment
-
-Obtain the [Metro Interstate Traffic Volume dataset](https://archive.ics.uci.edu/dataset/492/metro+interstate+traffic+volume) and place its CSV at the path declared in `configs/datasets/MetroTraffic.json`. The configuration uses `upstream_legacy` preprocessing to preserve the original 40,255/7,949-row split, 13-column representation, 40,224 training windows, and C/M/F masks.
+Download the [Metro Interstate Traffic Volume dataset](https://archive.ics.uci.edu/dataset/492/metro+interstate+traffic+volume) and place it at the path declared in `configs/datasets/MetroTraffic.json`. This configuration deliberately uses `upstream_legacy` preprocessing so that I can compare the generalized pipeline with the original data layout.
 
 ```bash
-python training_wavestitch.py \
+python -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/metrotraffic_upstream.json \
   --dry-run
 
-# Remove --dry-run only when a full training run is intended.
-python training_wavestitch.py \
+python -m scripts.training.training_wavestitch \
   --experiment-config configs/experiments/metrotraffic_upstream.json
 
-python synthesis_wavestitch_pipeline_strided_preconditioning.py \
+python -m scripts.synthesis.synthesis_wavestitch_pipeline_strided_preconditioning \
   --experiment-config configs/experiments/metrotraffic_upstream.json \
   --synthesis-profile C \
   --output-dir generated/metrotraffic-reference
 ```
 
-Repeat synthesis with profiles M and F for the other configured upstream conditions. The exact upstream authors' checkpoint was not available; the numbers below are a technical reproduction/reference validation, not a claim of exact checkpoint reproduction.
-
-### UCI Occupancy experiment
-
-Download the [UCI Occupancy Detection dataset](https://archive.ics.uci.edu/dataset/357/occupancy+detection), extract `datatraining.txt`, and place an unchanged copy at `data/uci-occupancy-detection/occupancy_training.csv`. The file has 8,143 one-minute rows. The timestamp cutoff in `configs/datasets/UCIOccupancyDetection.json` produces 6,129 train and 2,014 test rows.
-
-```bash
-python training_wavestitch.py \
-  --experiment-config configs/experiments/uci_occupancy_full.json \
-  --dry-run
-
-# Full training (300 epochs; potentially very slow on CPU).
-python -u training_wavestitch.py \
-  --experiment-config configs/experiments/uci_occupancy_full.json
-
-python -u synthesis_wavestitch_pipeline_strided_preconditioning.py \
-  --experiment-config configs/experiments/uci_occupancy_full.json \
-  --output-dir generated/uci-occupancy-reproduction
-```
-
-The structured v2 checkpoint is authoritative for the window, architecture, diffusion schedule, column layout, and preprocessing fit state. Synthesis restores this state and never refits it. Detailed protocols and evaluator commands are in [Experiments](docs/EXPERIMENTS.md).
-
-## Scientific results
-
-All three metrics are distances; lower is better. Reported dispersion is the population standard deviation over five trials.
-
-### MetroTraffic
+Repeat synthesis with profiles `M` and `F` for the other conditioning levels. I did not have the exact checkpoint used by the original WaveStitch authors, so these figures are reference-reproduction results rather than an exact checkpoint reproduction.
 
 | Profile | MSE | ACD | xCorr |
 |---|---:|---:|---:|
@@ -133,54 +95,47 @@ All three metrics are distances; lower is better. Reported dispersion is the pop
 | M | 0.323540 ± 0.032583 | 0.113842 ± 0.013006 | 0.121345 ± 0.005321 |
 | F | 0.153312 ± 0.008988 | 0.045260 ± 0.001747 | 0.053775 ± 0.009166 |
 
-These are this project's technical reproduction/reference-validation results. The exact checkpoint used by the upstream authors was unavailable.
+### UCI Occupancy case study
 
-### UCI Occupancy
+Download the [UCI Occupancy Detection dataset](https://archive.ics.uci.edu/dataset/357/occupancy+detection), extract `datatraining.txt` and save an unchanged copy as `data/uci-occupancy-detection/occupancy_training.csv`. The configured timestamp cutoff produces 6,129 training rows and 2,014 test rows.
 
-| MSE | ACD | xcorrD |
+```bash
+python -m scripts.training.training_wavestitch \
+  --experiment-config configs/experiments/uci_occupancy_full.json \
+  --dry-run
+
+python -m scripts.training.training_wavestitch \
+  --experiment-config configs/experiments/uci_occupancy_full.json
+
+python -m scripts.synthesis.synthesis_wavestitch_pipeline_strided_preconditioning \
+  --experiment-config configs/experiments/uci_occupancy_full.json \
+  --output-dir generated/uci-occupancy-reproduction
+```
+
+Across five trials I obtained the following distances (lower is better; dispersion is the population standard deviation):
+
+| MSE | ACD | xCorrD |
 |---:|---:|---:|
 | 3.7096 ± 0.0562 | 0.3480 ± 0.0343 | 0.4088 ± 0.0643 |
 
-The end-to-end pipeline completed correctly, but generative quality was insufficient. Temperature, Humidity, and CO2 showed variance collapse; Humidity and the high CO2 tail shifted strongly from train to test; and continuous diffusion failed to reproduce Light's large exact-zero mass, producing negative Light values in about 46% of synthetic rows. `Occupancy` alone did not identify the environmental regime well enough.
+The pipeline completed correctly, but the generated data were not good enough. Temperature, Humidity and CO2 lost too much variance; the test partition also contains a strong Humidity/CO2 shift; and continuous diffusion did not reproduce the large exact-zero mass of `Light`. Conditioning only on `Occupancy` did not identify the environmental regime.
 
-## Diagnostic experiments
+I checked that conclusion with two additional experiments. A train-only conditioned block-bootstrap baseline improved the three mean distances but still missed the shifted test regime. Sampler ablations showed that the legacy reverse-noise rule contributes to under-dispersion, but changing it did not solve the main failure. My interpretation is therefore that data shift and insufficient conditioning dominate this case, while the sampler has a smaller but measurable effect.
 
-The train-only empirical conditioned block-bootstrap baseline used only train signals and the test `Occupancy` sequence. Across five trials it achieved MSE `3.2069 ± 0.4878`, ACD `0.2657 ± 0.0654`, and xcorrD `0.3741 ± 0.0879`. It improved all three WaveStitch means but remained far from the shifted test regime, especially for Humidity and CO2. Verdict: **`DATA/CONDITIONING LIMIT DOMINANT`**.
+The protocols, evaluator commands and machine-readable tables are in [Experiments](docs/EXPERIMENTS.md), [Results](docs/RESULTS.md) and [`results/`](results/README.md).
 
-Two isolated one-trial sampler ablations reused the same trained checkpoint. Disabling gradient correction produced no relevant benefit. Replacing the legacy reverse-noise amplitude with `sqrt(posterior variance)` partially increased dispersion and reduced negative Light values, but did not restore Light's zero mass or improve overall metrics. Verdict: **`SAMPLER CONTRIBUTION MODERATE`**.
+## Boundaries of the implementation
 
-Therefore, distribution shift and insufficient conditioning are the dominant limitations in this experiment; the legacy reverse-noise behavior contributes moderately to under-dispersion. `--sqrt-posterior-variance` remains an experimental, non-default variant. `--disable-gradient-correction` is an ablation switch only, not a recommended improvement. The default behavior remains upstream-compatible.
+At the moment the generalized loader supports ordered flat CSV time series, not grouped/panel series. Splits must be contiguous rather than interlaced, synthesis stride cannot exceed the window size, and the model does not enforce physical bounds or discrete masses. `train_only` preprocessing can also expose real train/test shifts that legacy full-dataset fitting hides. I do not claim that one model configuration generalizes to every dataset.
 
-See [Results](docs/RESULTS.md) and the machine-readable summaries in [`results/`](results/README.md).
+The original HPC measurements used in my thesis are not public and are not included, reconstructed or simulated here. See [Limitations](docs/LIMITATIONS.md) for the technical list and the [thesis repository](https://github.com/Frero0/bachelors-thesis-unito) for the original research context.
 
-## Limitations
+## Tests, provenance and license
 
-- Panel/grouped time series are not yet supported.
-- Multi-interval or interlaced splits are not supported.
-- Synthesis stride greater than the window size is rejected.
-- Train-only preprocessing can reveal genuine train-to-test shifts previously masked by legacy full-dataset fitting.
-- Continuous diffusion does not guarantee physical support constraints or discrete masses such as `Light = 0`.
-- The CPU Cauchy fallback is much slower than CUDA acceleration.
-- No single hyperparameter set is claimed to generalize to every dataset.
-
-The full scope and interpretation are documented in [Limitations](docs/LIMITATIONS.md).
-
-## Relationship with the original bachelor thesis
-
-This repository is a later follow-up and generalization of the author's bachelor-thesis work. The original thesis applied WaveStitch to proprietary or otherwise non-public energy/HPC data. Those research-centre data are not included here and must not be reconstructed or simulated as if they were the originals.
-
-Future public thesis repository: _link to be added when available_.
-
-## Testing and repository policy
-
-Run the complete suite with:
+The current regression baseline is **158 passing tests**:
 
 ```bash
-pytest -q
+python -m pytest -q
 ```
 
-The release baseline is 158 passing tests. Raw datasets, virtual environments, model checkpoints, generated CSVs, evaluation workspaces, logs, PID/status files, cache directories, and machine-specific launchers are excluded from version control. Small, curated scientific summaries are retained under `results/` with provenance notes.
-
-## Upstream attribution and license
-
-WaveStitch Generalized derives from [adis98/HierarchicalTS](https://github.com/adis98/HierarchicalTS), base commit `dcb1e98eb3bc31f4fa1c0ce3bfef4dcd8e473e47`. The upstream MIT `LICENSE` and copyright notice are retained unchanged. See [Upstream provenance](docs/UPSTREAM.md) for the boundary between preserved upstream code and this independent follow-up.
+This work derives from [adis98/HierarchicalTS](https://github.com/adis98/HierarchicalTS) at base commit `dcb1e98eb3bc31f4fa1c0ce3bfef4dcd8e473e47`. I retained the upstream MIT license and copyright notice. [Upstream provenance](docs/UPSTREAM.md) records what remains upstream-derived and what I added in this repository.

@@ -3,8 +3,8 @@ import json
 import pandas as pd
 import pytest
 
-import dataset_config
-from data_utils import DatasetSplitError, Preprocessor
+from wavestitch import dataset_config
+from wavestitch.data_utils import DatasetSplitError, Preprocessor
 
 
 def _rows(count=10):

@@ -6,7 +6,7 @@ from argparse import Namespace
 import pytest
 import torch
 
-from checkpoint_utils import (
+from wavestitch.checkpoint_utils import (
     CheckpointCompatibilityError,
     CheckpointFormatError,
     apply_structured_checkpoint_args,
@@ -17,8 +17,8 @@ from checkpoint_utils import (
     is_structured_checkpoint,
     validate_structured_checkpoint,
 )
-from data_utils import Preprocessor
-from training_utils import fetchModel, resolve_model_columns
+from wavestitch.data_utils import Preprocessor
+from wavestitch.training_utils import fetchModel, resolve_model_columns
 
 
 def _args():

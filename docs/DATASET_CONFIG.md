@@ -6,7 +6,7 @@ pipeline-synthesis entry points. `MetroTraffic` preserves upstream behavior
 through its explicit legacy loader and preprocessing mode. Datasets without a
 JSON configuration continue through their historical dataset-specific
 branches. Config-driven `C/M/F` masks are integrated in
-`synthesis_wavestitch_pipeline_strided_preconditioning.py`; other historical
+`scripts/synthesis/synthesis_wavestitch_pipeline_strided_preconditioning.py`; other historical
 synthesis entry points retain their upstream interfaces.
 
 The schema is:
@@ -128,7 +128,7 @@ when source availability must also be checked.
 timestamp, signal and metadata columns, cyclic columns, temporal-order
 metadata, and 2018 test split. Its loader remains `legacy`: only these declared
 parameters are config-driven, while scaling and cyclic-encoding algorithms
-remain the upstream implementations in `data_utils.py`.
+remain the upstream implementations in `wavestitch/data_utils.py`.
 
 `configs/datasets/UCIOccupancyDetection.json` is the complete generalized
 example used by the final experiment. It declares four signals, `Occupancy`

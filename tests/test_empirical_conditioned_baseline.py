@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from empirical_conditioned_baseline import conditioned_run_block_bootstrap
+from scripts.evaluation.empirical_conditioned_baseline import conditioned_run_block_bootstrap
 
 
 def _train_frame():

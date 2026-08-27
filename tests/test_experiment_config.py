@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import experiment_runtime
-from dataset_config import load_dataset_config_by_id
-from experiment_config import (
+from wavestitch import experiment_runtime
+from wavestitch.dataset_config import load_dataset_config_by_id
+from wavestitch.experiment_config import (
     ExperimentCheckpointConflictError,
     ExperimentConfig,
     ExperimentConfigError,
@@ -17,7 +17,7 @@ from experiment_config import (
     resolve_experiment,
     validate_checkpoint_experiment_conflicts,
 )
-from experiment_runtime import build_dry_run_report
+from wavestitch.experiment_runtime import build_dry_run_report
 
 
 def _minimal_config(**overrides):

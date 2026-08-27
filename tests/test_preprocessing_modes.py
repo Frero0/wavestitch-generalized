@@ -8,19 +8,19 @@ import pytest
 import torch
 from sklearn.preprocessing import StandardScaler
 
-import dataset_config
-import data_utils
-from checkpoint_utils import (
+from wavestitch import dataset_config
+from wavestitch import data_utils
+from wavestitch.checkpoint_utils import (
     CheckpointCompatibilityError,
     build_structured_checkpoint,
     checkpoint_preprocessing_state,
     validate_structured_checkpoint,
 )
-from data_utils import MetadataCategoryError, PreprocessingStateError, Preprocessor
-from synthesis_wavestitch_pipeline_strided_preconditioning import (
+from wavestitch.data_utils import MetadataCategoryError, PreprocessingStateError, Preprocessor
+from scripts.synthesis.synthesis_wavestitch_pipeline_strided_preconditioning import (
     build_synthesis_preprocessor,
 )
-from training_utils import resolve_model_columns
+from wavestitch.training_utils import resolve_model_columns
 
 
 def _rows():

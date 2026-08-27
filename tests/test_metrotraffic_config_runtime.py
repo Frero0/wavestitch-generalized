@@ -6,9 +6,9 @@ import pandas as pd
 import pytest
 from sklearn.preprocessing import StandardScaler
 
-import dataset_config
-import data_utils
-from data_utils import CyclicEncoder, Preprocessor
+from wavestitch import dataset_config
+from wavestitch import data_utils
+from wavestitch.data_utils import CyclicEncoder, Preprocessor
 
 
 METRO_SIGNALS = [
